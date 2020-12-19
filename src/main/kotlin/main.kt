@@ -6,15 +6,14 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumnFor
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.Add
+import androidx.compose.material.icons.twotone.Delete
 import androidx.compose.material.icons.twotone.Edit
 import androidx.compose.material.icons.twotone.PlayArrow
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -31,15 +30,12 @@ fun main() = Window(title = "AViDity") {
 
 @Composable
 fun AvidityApp() {
-    val fakeEmulators = listOf(
+    val emulators = mutableStateListOf(
         Emulator("Pixel 2 XL"),
         Emulator("Nexus 5X"),
         Emulator("Pixel 4"),
         Emulator("Pixel 5"),
-    ).let {
-        // Make a lot of them
-        it + it + it + it + it + it + it + it + it + it + it + it + it + it
-    }
+    )
 
     Column(modifier = Modifier.fillMaxWidth()) {
         Box(modifier = Modifier.fillMaxWidth()) {
@@ -49,13 +45,23 @@ fun AvidityApp() {
                 modifier = Modifier.align(Alignment.CenterStart).padding(8.dp),
             )
 
-            Icon(
-                imageVector = Icons.TwoTone.Add,
+            IconButton(
+                onClick = {
+                    println("adding an emulator")
+                    emulators.add(Emulator("New Emulator"))
+                },
                 modifier = Modifier.align(Alignment.CenterEnd).padding(8.dp),
-            )
+            ) {
+                Icon(imageVector = Icons.TwoTone.Add)
+            }
         }
         Divider()
-        EmulatorList(fakeEmulators)
+        EmulatorList(
+            emulators = emulators,
+            onItemDeleteClick = {
+                emulators.remove(it)
+            }
+        )
     }
 }
 
@@ -63,6 +69,9 @@ fun AvidityApp() {
 @Composable
 fun EmulatorList(
     emulators: List<Emulator>,
+    onItemPlayClick: (emulator: Emulator) -> Unit = {},
+    onItemEditClick: (emulator: Emulator) -> Unit = {},
+    onItemDeleteClick: (emulator: Emulator) -> Unit = {},
 ) {
     Box {
         val state = rememberLazyListState()
@@ -70,10 +79,15 @@ fun EmulatorList(
 
         LazyColumnFor(
             items = emulators,
-            modifier = Modifier.fillMaxSize().padding(end = 12.dp),
+            modifier = Modifier.fillMaxSize().padding(end = 10.dp),
             state = state,
         ) { emulator ->
-            EmulatorItem(emulator)
+            EmulatorItem(
+                emulator = emulator,
+                onPlayClick = { onItemPlayClick(emulator) },
+                onEditClick = { onItemEditClick(emulator) },
+                onDeleteClick = { onItemDeleteClick(emulator) },
+            )
         }
         VerticalScrollbar(
             modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
@@ -87,13 +101,17 @@ fun EmulatorList(
 }
 
 @Composable
-fun EmulatorItem(emulator: Emulator) {
+fun EmulatorItem(
+    emulator: Emulator,
+    onPlayClick: () -> Unit = {},
+    onEditClick: () -> Unit = {},
+    onDeleteClick: () -> Unit = {},
+) {
     val hovered = remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
             .pointerMoveFilter(
                 onEnter = {
                     hovered.value = true
@@ -108,19 +126,30 @@ fun EmulatorItem(emulator: Emulator) {
     ) {
         Text(
             text = emulator.name,
-            modifier = Modifier.align(Alignment.CenterStart),
+            modifier = Modifier.align(Alignment.CenterStart).padding(16.dp),
             style = MaterialTheme.typography.h6
         )
 
         Row(modifier = Modifier.align(Alignment.CenterEnd)) {
-            Icon(
-                imageVector = Icons.TwoTone.PlayArrow,
+            IconButton(
                 modifier = Modifier.padding(4.dp),
-            )
-            Icon(
-                imageVector = Icons.TwoTone.Edit,
+                onClick = onPlayClick,
+            ) {
+                Icon(imageVector = Icons.TwoTone.PlayArrow)
+            }
+            IconButton(
                 modifier = Modifier.padding(4.dp),
-            )
+                onClick = onEditClick,
+            ) {
+                Icon(imageVector = Icons.TwoTone.Edit)
+            }
+
+            IconButton(
+                modifier = Modifier.padding(4.dp),
+                onClick = onDeleteClick,
+            ) {
+                Icon(imageVector = Icons.TwoTone.Delete)
+            }
         }
     }
 
