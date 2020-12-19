@@ -27,13 +27,9 @@ import androidx.compose.material.icons.twotone.PlayArrow
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.savedinstancestate.savedInstanceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.res.vectorXmlResource
 import androidx.compose.ui.unit.dp
 import data.Emulator
@@ -134,23 +130,7 @@ fun EmulatorItem(
     onEditClick: () -> Unit = {},
     onDeleteClick: () -> Unit = {},
 ) {
-    val hovered = remember { mutableStateOf(false) }
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .pointerMoveFilter(
-                onEnter = {
-                    hovered.value = true
-                    false
-                },
-                onExit = {
-                    hovered.value = false
-                    false
-                }
-            )
-            .background(if (hovered.value) Color.LightGray else Color.Unspecified)
-    ) {
+    Box(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = emulator.name,
             modifier = Modifier.align(Alignment.CenterStart).padding(16.dp),
