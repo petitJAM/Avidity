@@ -2,35 +2,52 @@ import androidx.compose.desktop.Window
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumnFor
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
-import androidx.compose.material.*
+import androidx.compose.material.Divider
+import androidx.compose.material.ExtendedFloatingActionButton
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.Add
 import androidx.compose.material.icons.twotone.Delete
 import androidx.compose.material.icons.twotone.Edit
 import androidx.compose.material.icons.twotone.PlayArrow
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.savedinstancestate.savedInstanceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerMoveFilter
+import androidx.compose.ui.res.vectorXmlResource
 import androidx.compose.ui.unit.dp
-import theme.AvidityColorPalette
+import theme.AvidityDarkColorPalette
+import theme.AvidityLightColorPalette
 
 fun main() = Window(title = "AViDity") {
-    MaterialTheme(colors = AvidityColorPalette) {
-        AvidityApp()
+    val darkTheme = savedInstanceState { true }
+    MaterialTheme(colors = if (darkTheme.value) AvidityDarkColorPalette else AvidityLightColorPalette) {
+        AvidityApp(darkTheme)
     }
 }
 
 @Composable
-fun AvidityApp() {
+fun AvidityApp(darkTheme: MutableState<Boolean>) {
     val emulators = mutableStateListOf(
         Emulator("Pixel 2 XL"),
         Emulator("Nexus 5X"),
@@ -39,7 +56,18 @@ fun AvidityApp() {
     )
 
     Column(modifier = Modifier.fillMaxWidth()) {
-        TopAppBar(title = { Text("Emulators") })
+        TopAppBar(
+            title = { Text("Emulators") },
+            actions = {
+                IconButton(
+                    onClick = { darkTheme.value = !darkTheme.value }
+                ) {
+                    Icon(
+                        imageVector = vectorXmlResource(if (darkTheme.value) "light_mode_24.xml" else "dark_mode_24.xml")
+                    )
+                }
+            }
+        )
 
         Box {
             EmulatorList(
