@@ -36,6 +36,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.res.vectorXmlResource
 import androidx.compose.ui.unit.dp
+import data.Emulator
 import theme.AvidityDarkColorPalette
 import theme.AvidityLightColorPalette
 
@@ -181,7 +182,3 @@ fun EmulatorItem(
 
     Divider()
 }
-
-data class Emulator(
-    val name: String,
-)
