@@ -21,9 +21,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.unit.dp
+import theme.AvidityColorPalette
 
 fun main() = Window(title = "AViDity") {
-    MaterialTheme {
+    MaterialTheme(colors = AvidityColorPalette) {
         AvidityApp()
     }
 }
@@ -38,30 +39,26 @@ fun AvidityApp() {
     )
 
     Column(modifier = Modifier.fillMaxWidth()) {
-        Box(modifier = Modifier.fillMaxWidth()) {
-            Text(
-                "Emulators",
-                style = MaterialTheme.typography.h4,
-                modifier = Modifier.align(Alignment.CenterStart).padding(8.dp),
+        TopAppBar(title = { Text("Emulators") })
+
+        Box {
+            EmulatorList(
+                emulators = emulators,
+                modifier = Modifier.fillMaxSize(),
+                onItemDeleteClick = {
+                    emulators.remove(it)
+                }
             )
 
-            IconButton(
+            ExtendedFloatingActionButton(
+                modifier = Modifier.align(Alignment.BottomEnd).padding(bottom = 24.dp, end = 16.dp),
+                text = { Text("Add Emulator") },
+                icon = { Icon(imageVector = Icons.TwoTone.Add) },
                 onClick = {
-                    println("adding an emulator")
                     emulators.add(Emulator("New Emulator"))
                 },
-                modifier = Modifier.align(Alignment.CenterEnd).padding(8.dp),
-            ) {
-                Icon(imageVector = Icons.TwoTone.Add)
-            }
+            )
         }
-        Divider()
-        EmulatorList(
-            emulators = emulators,
-            onItemDeleteClick = {
-                emulators.remove(it)
-            }
-        )
     }
 }
 
@@ -69,11 +66,12 @@ fun AvidityApp() {
 @Composable
 fun EmulatorList(
     emulators: List<Emulator>,
+    modifier: Modifier = Modifier,
     onItemPlayClick: (emulator: Emulator) -> Unit = {},
     onItemEditClick: (emulator: Emulator) -> Unit = {},
     onItemDeleteClick: (emulator: Emulator) -> Unit = {},
 ) {
-    Box {
+    Box(modifier = modifier) {
         val state = rememberLazyListState()
         val itemCount = emulators.size
 
