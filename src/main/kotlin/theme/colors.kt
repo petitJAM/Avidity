@@ -12,6 +12,8 @@ val yellow = Color(0xFFf9a825)
 val lightYellow = Color(0XFFfab950)
 val darkYellow = Color(0xFFae7519)
 
+val darkGray = Color(0xFF2e2e2e)
+
 val AvidityLightColorPalette = lightColors(
     primary = green,
     primaryVariant = lightGreen,
@@ -31,8 +33,8 @@ val AvidityDarkColorPalette = darkColors(
     primary = green,
     primaryVariant = lightGreen,
     secondary = darkYellow,
-    background = Color.Black,
-    surface = Color.Black,
+    background = darkGray,
+    surface = darkGray,
     onPrimary = Color.White,
     onSecondary = Color.White,
     onBackground = Color.White,

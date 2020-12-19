@@ -56,7 +56,7 @@ fun AvidityApp(darkTheme: MutableState<Boolean>) {
         Emulator("Pixel 5"),
     )
 
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = Modifier.fillMaxWidth().background(MaterialTheme.colors.background)) {
         TopAppBar(
             title = { Text("Emulators") },
             actions = {
@@ -154,7 +154,8 @@ fun EmulatorItem(
         Text(
             text = emulator.name,
             modifier = Modifier.align(Alignment.CenterStart).padding(16.dp),
-            style = MaterialTheme.typography.h6
+            style = MaterialTheme.typography.h6,
+            color = MaterialTheme.colors.onSurface,
         )
 
         Row(modifier = Modifier.align(Alignment.CenterEnd)) {
@@ -162,20 +163,30 @@ fun EmulatorItem(
                 modifier = Modifier.padding(4.dp),
                 onClick = onPlayClick,
             ) {
-                Icon(imageVector = Icons.TwoTone.PlayArrow)
+                Icon(
+                    imageVector = Icons.TwoTone.PlayArrow,
+                    tint = MaterialTheme.colors.onSurface,
+                )
             }
+
             IconButton(
                 modifier = Modifier.padding(4.dp),
                 onClick = onEditClick,
             ) {
-                Icon(imageVector = Icons.TwoTone.Edit)
+                Icon(
+                    imageVector = Icons.TwoTone.Edit,
+                    tint = MaterialTheme.colors.onSurface,
+                )
             }
 
             IconButton(
                 modifier = Modifier.padding(4.dp),
                 onClick = onDeleteClick,
             ) {
-                Icon(imageVector = Icons.TwoTone.Delete)
+                Icon(
+                    imageVector = Icons.TwoTone.Delete,
+                    tint = MaterialTheme.colors.onSurface,
+                )
             }
         }
     }
