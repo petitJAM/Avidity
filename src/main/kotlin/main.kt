@@ -35,12 +35,24 @@ import androidx.compose.ui.unit.dp
 import data.Emulator
 import theme.AvidityDarkColorPalette
 import theme.AvidityLightColorPalette
+import java.awt.image.BufferedImage
+import java.io.IOException
+import javax.imageio.ImageIO
 
-fun main() = Window(title = "AViDity") {
+fun main() = Window(
+    title = "AViDity",
+    icon = getWindowIcon(),
+) {
     val darkTheme = savedInstanceState { true }
     MaterialTheme(colors = if (darkTheme.value) AvidityDarkColorPalette else AvidityLightColorPalette) {
         AvidityApp(darkTheme)
     }
+}
+
+private fun getWindowIcon(): BufferedImage = try {
+    ImageIO.read(Thread.currentThread().contextClassLoader.getResource("android-arms-crossed.png"))
+} catch (ignored: IOException) {
+    BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB)
 }
 
 @Composable

@@ -36,8 +36,21 @@ compose.desktop {
     application {
         mainClass = "MainKt"
         nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "Avidity"
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb, TargetFormat.Exe)
+            packageName = "AViDity"
+            version = "0.1"
+            description = "Manage Android emulators"
+
+            val iconsRoot = project.file("./src/main/resources")
+            macOS {
+                // TODO: Create a Mac icon file (.icns)
+            }
+            windows {
+                iconFile.set(iconsRoot.resolve("android-arms-crossed.ico"))
+            }
+            linux {
+                iconFile.set(iconsRoot.resolve("android-arms-crossed.png"))
+            }
         }
     }
 }
