@@ -1,19 +1,28 @@
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.desktop.Window
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.VerticalScrollbar
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumnFor
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.twotone.Add
 import androidx.compose.material.icons.twotone.Edit
 import androidx.compose.material.icons.twotone.PlayArrow
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.layout.HorizontalAlignmentLine
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 fun main() = Window(title = "AViDity") {
     MaterialTheme {
@@ -34,25 +43,75 @@ fun AvidityApp() {
     }
 
     Column(modifier = Modifier.fillMaxWidth()) {
-        Text("Emulators", style = MaterialTheme.typography.h4)
+        Box(modifier = Modifier.fillMaxWidth()) {
+            Text(
+                "Emulators",
+                style = MaterialTheme.typography.h4,
+                modifier = Modifier.align(Alignment.CenterStart).padding(8.dp),
+            )
+
+            Icon(
+                imageVector = Icons.TwoTone.Add,
+                modifier = Modifier.align(Alignment.CenterEnd).padding(8.dp),
+            )
+        }
         Divider()
         EmulatorList(fakeEmulators)
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun EmulatorList(
     emulators: List<Emulator>,
 ) {
-    LazyColumnFor(modifier = Modifier.fillMaxWidth(), items = emulators) { emulator ->
-        EmulatorItem(emulator)
+    Box {
+        val state = rememberLazyListState()
+        val itemCount = emulators.size
+
+        LazyColumnFor(
+            items = emulators,
+            modifier = Modifier.fillMaxSize().padding(end = 12.dp),
+            state = state,
+        ) { emulator ->
+            EmulatorItem(emulator)
+        }
+        VerticalScrollbar(
+            modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
+            adapter = rememberScrollbarAdapter(
+                scrollState = state,
+                itemCount = itemCount,
+                averageItemSize = 32.dp + 20.dp,
+            )
+        )
     }
 }
 
 @Composable
 fun EmulatorItem(emulator: Emulator) {
-    Box(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-        Text(emulator.name, modifier = Modifier.align(Alignment.CenterStart))
+    val hovered = remember { mutableStateOf(false) }
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .pointerMoveFilter(
+                onEnter = {
+                    hovered.value = true
+                    false
+                },
+                onExit = {
+                    hovered.value = false
+                    false
+                }
+            )
+            .background(if (hovered.value) Color.LightGray else Color.Unspecified)
+    ) {
+        Text(
+            text = emulator.name,
+            modifier = Modifier.align(Alignment.CenterStart),
+            style = MaterialTheme.typography.h6
+        )
 
         Row(modifier = Modifier.align(Alignment.CenterEnd)) {
             Icon(
