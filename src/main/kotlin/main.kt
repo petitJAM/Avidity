@@ -1,6 +1,8 @@
+import androidx.compose.desktop.DesktopMaterialTheme
 import androidx.compose.desktop.Window
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.ScrollableColumn
+import androidx.compose.foundation.ScrollbarStyleAmbient
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -54,7 +56,7 @@ fun main() = Window(
     icon = getWindowIcon(),
 ) {
     val darkTheme = savedInstanceState { true }
-    MaterialTheme(colors = if (darkTheme.value) AvidityDarkColorPalette else AvidityLightColorPalette) {
+    DesktopMaterialTheme(colors = if (darkTheme.value) AvidityDarkColorPalette else AvidityLightColorPalette) {
         AvidityApp(darkTheme)
     }
 }
@@ -73,6 +75,12 @@ fun AvidityApp(darkTheme: MutableState<Boolean>) {
             Emulator("Nexus 5X"),
             Emulator("Pixel 4"),
             Emulator("Pixel 5"),
+            Emulator("Pixel"),
+            Emulator("Pixel XL"),
+            Emulator("Pixel 3 XL"),
+            Emulator("Pixel 3a"),
+            Emulator("Pixel 4a"),
+            Emulator("Nexus 4"),
         )
     }
 
@@ -162,6 +170,7 @@ fun EmulatorList(
         }
         VerticalScrollbar(
             modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
+            style = ScrollbarStyleAmbient.current,
             adapter = rememberScrollbarAdapter(
                 scrollState = state,
                 itemCount = itemCount,
