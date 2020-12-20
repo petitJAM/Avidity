@@ -27,7 +27,9 @@ import androidx.compose.material.icons.twotone.PlayArrow
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.savedinstancestate.savedInstanceState
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.vectorXmlResource
@@ -57,14 +59,24 @@ private fun getWindowIcon(): BufferedImage = try {
 
 @Composable
 fun AvidityApp(darkTheme: MutableState<Boolean>) {
-    val emulators = mutableStateListOf(
-        Emulator("Pixel 2 XL"),
-        Emulator("Nexus 5X"),
-        Emulator("Pixel 4"),
-        Emulator("Pixel 5"),
-    )
+    val emulators = remember {
+        mutableStateListOf(
+            Emulator("Pixel 2 XL"),
+            Emulator("Nexus 5X"),
+            Emulator("Pixel 4"),
+            Emulator("Pixel 5"),
+        )
+    }
 
-    Column(modifier = Modifier.fillMaxWidth().background(MaterialTheme.colors.background)) {
+    AvidityContent(darkTheme, emulators)
+}
+
+@Composable
+fun AvidityContent(
+    darkTheme: MutableState<Boolean>,
+    emulators: SnapshotStateList<Emulator>,
+) {
+    Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colors.background)) {
         TopAppBar(
             title = { Text("Emulators") },
             actions = {
