@@ -174,7 +174,7 @@ fun EmulatorList(
             adapter = rememberScrollbarAdapter(
                 scrollState = state,
                 itemCount = itemCount,
-                averageItemSize = 32.dp + 20.dp,
+                averageItemSize = 32.dp + 28.dp,
             )
         )
     }
