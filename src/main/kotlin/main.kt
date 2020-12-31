@@ -4,9 +4,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.ScrollbarStyleAmbient
 import androidx.compose.foundation.VerticalScrollbar
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -23,6 +21,7 @@ import androidx.compose.material.ExtendedFloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TopAppBar
@@ -51,21 +50,23 @@ import java.awt.image.BufferedImage
 import java.io.IOException
 import javax.imageio.ImageIO
 
-fun main() = Window(
-    title = "AViDity",
-    icon = getWindowIcon(),
-) {
-    val darkTheme = savedInstanceState { true }
-    DesktopMaterialTheme(colors = if (darkTheme.value) AvidityDarkColorPalette else AvidityLightColorPalette) {
-        AvidityApp(darkTheme)
+fun main() =
+    Window(
+        title = "AViDity",
+        icon = getWindowIcon(),
+    ) {
+        val darkTheme = savedInstanceState { true }
+        DesktopMaterialTheme(colors = if (darkTheme.value) AvidityDarkColorPalette else AvidityLightColorPalette) {
+            AvidityApp(darkTheme)
+        }
     }
-}
 
-private fun getWindowIcon(): BufferedImage = try {
-    ImageIO.read(Thread.currentThread().contextClassLoader.getResource("android-arms-crossed.png"))
-} catch (ignored: IOException) {
-    BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB)
-}
+private fun getWindowIcon(): BufferedImage =
+    try {
+        ImageIO.read(Thread.currentThread().contextClassLoader.getResource("android-arms-crossed.png"))
+    } catch (ignored: IOException) {
+        BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB)
+    }
 
 @Composable
 fun AvidityApp(darkTheme: MutableState<Boolean>) {
@@ -108,21 +109,22 @@ fun AvidityContent(
     emulators: SnapshotStateList<Emulator>,
     dialogState: MutableState<Boolean>,
 ) {
-    Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colors.background)) {
-        TopAppBar(
-            title = { Text("Emulators") },
-            actions = {
-                IconButton(
-                    onClick = { darkTheme.value = !darkTheme.value }
-                ) {
-                    Icon(
-                        imageVector = vectorXmlResource(if (darkTheme.value) "light_mode_24.xml" else "dark_mode_24.xml")
-                    )
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Emulators") },
+                actions = {
+                    IconButton(
+                        onClick = { darkTheme.value = !darkTheme.value }
+                    ) {
+                        Icon(
+                            imageVector = vectorXmlResource(if (darkTheme.value) "light_mode_24.xml" else "dark_mode_24.xml")
+                        )
+                    }
                 }
-            }
-        )
-
-        Box {
+            )
+        },
+        bodyContent = {
             EmulatorList(
                 emulators = emulators,
                 modifier = Modifier.fillMaxSize(),
@@ -130,9 +132,9 @@ fun AvidityContent(
                     emulators.remove(it)
                 }
             )
-
+        },
+        floatingActionButton = {
             ExtendedFloatingActionButton(
-                modifier = Modifier.align(Alignment.BottomEnd).padding(bottom = 24.dp, end = 16.dp),
                 text = { Text("Add Emulator") },
                 icon = { Icon(imageVector = Icons.TwoTone.Add) },
                 onClick = {
@@ -140,7 +142,7 @@ fun AvidityContent(
                 },
             )
         }
-    }
+    )
 }
 
 @OptIn(ExperimentalFoundationApi::class)
