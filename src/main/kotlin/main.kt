@@ -30,6 +30,7 @@ import androidx.compose.material.icons.twotone.Add
 import androidx.compose.material.icons.twotone.Delete
 import androidx.compose.material.icons.twotone.Edit
 import androidx.compose.material.icons.twotone.PlayArrow
+import androidx.compose.material.icons.twotone.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
@@ -44,6 +45,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import data.Emulator
+import emulatortools.findEmulators
 import theme.AvidityDarkColorPalette
 import theme.AvidityLightColorPalette
 import java.awt.image.BufferedImage
@@ -115,7 +117,16 @@ fun AvidityContent(
                 title = { Text("Emulators") },
                 actions = {
                     IconButton(
-                        onClick = { darkTheme.value = !darkTheme.value }
+                        onClick = {
+                            emulators.clear()
+                            emulators += findEmulators()
+                        },
+                    ) {
+                        Icon(imageVector = Icons.TwoTone.Refresh)
+                    }
+
+                    IconButton(
+                        onClick = { darkTheme.value = !darkTheme.value },
                     ) {
                         Icon(
                             imageVector = vectorXmlResource(if (darkTheme.value) "light_mode_24.xml" else "dark_mode_24.xml")
