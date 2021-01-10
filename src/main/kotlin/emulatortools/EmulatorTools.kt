@@ -16,11 +16,8 @@ fun findEmulators(): List<Emulator> {
 
     val output = proc.inputStream.bufferedReader().readText().trim()
 
-    println(output)
-
     return output
         .replace("\r\n", "\n")
         .split("\n")
         .map { Emulator(it) }
-        .onEach { println(it) }
 }

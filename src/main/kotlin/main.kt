@@ -33,19 +33,19 @@ import androidx.compose.material.icons.twotone.PlayArrow
 import androidx.compose.material.icons.twotone.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.savedinstancestate.savedInstanceState
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.vectorXmlResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DesktopDialogProperties
 import androidx.compose.ui.window.Dialog
 import data.Emulator
-import emulatortools.findEmulators
 import theme.AvidityDarkColorPalette
 import theme.AvidityLightColorPalette
 import java.awt.image.BufferedImage
@@ -72,32 +72,31 @@ private fun getWindowIcon(): BufferedImage =
 
 @Composable
 fun AvidityApp(darkTheme: MutableState<Boolean>) {
-    val emulators = remember {
-        mutableStateListOf(
-            Emulator("Pixel 2 XL"),
-            Emulator("Nexus 5X"),
-            Emulator("Pixel 4"),
-            Emulator("Pixel 5"),
-            Emulator("Pixel"),
-            Emulator("Pixel XL"),
-            Emulator("Pixel 3 XL"),
-            Emulator("Pixel 3a"),
-            Emulator("Pixel 4a"),
-            Emulator("Nexus 4"),
-        )
-    }
+    val emulatorsRepository = EmulatorsRepository()
+        .also { it.refresh() }
+
+    val emulators = emulatorsRepository.emulators.collectAsState(emptyList())
 
     val dialogState = remember { mutableStateOf(false) }
 
-    AvidityContent(darkTheme, emulators, dialogState)
+    AvidityContent(
+        darkTheme = darkTheme,
+        emulators = emulators,
+        onCreateEmulatorClick = { dialogState.value = true },
+        onEmulatorsRefreshClick = emulatorsRepository::refresh,
+        onEmulatorStart = emulatorsRepository::start,
+        onEmulatorEdit = emulatorsRepository::edit,
+        onEmulatorDelete = emulatorsRepository::delete,
+    )
 
     if (dialogState.value) {
         Dialog(
+            properties = DesktopDialogProperties(title = "Create Emulator"),
             onDismissRequest = { dialogState.value = false }
         ) {
             NewEmulatorForm(
                 onEmulatorCreated = {
-                    emulators += it
+                    emulatorsRepository.create(it)
                     dialogState.value = false
                 }
             )
@@ -108,20 +107,19 @@ fun AvidityApp(darkTheme: MutableState<Boolean>) {
 @Composable
 fun AvidityContent(
     darkTheme: MutableState<Boolean>,
-    emulators: SnapshotStateList<Emulator>,
-    dialogState: MutableState<Boolean>,
+    emulators: State<List<Emulator>>,
+    onCreateEmulatorClick: () -> Unit,
+    onEmulatorsRefreshClick: () -> Unit,
+    onEmulatorStart: (emulator: Emulator) -> Unit,
+    onEmulatorEdit: (emulator: Emulator) -> Unit,
+    onEmulatorDelete: (emulator: Emulator) -> Unit,
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Emulators") },
                 actions = {
-                    IconButton(
-                        onClick = {
-                            emulators.clear()
-                            emulators += findEmulators()
-                        },
-                    ) {
+                    IconButton(onClick = onEmulatorsRefreshClick) {
                         Icon(imageVector = Icons.TwoTone.Refresh)
                     }
 
@@ -137,20 +135,18 @@ fun AvidityContent(
         },
         bodyContent = {
             EmulatorList(
-                emulators = emulators,
+                emulators = emulators.value,
                 modifier = Modifier.fillMaxSize(),
-                onItemDeleteClick = {
-                    emulators.remove(it)
-                }
+                onItemPlayClick = onEmulatorStart,
+                onItemEditClick = onEmulatorEdit,
+                onItemDeleteClick = onEmulatorDelete,
             )
         },
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 text = { Text("Add Emulator") },
                 icon = { Icon(imageVector = Icons.TwoTone.Add) },
-                onClick = {
-                    dialogState.value = true
-                },
+                onClick = onCreateEmulatorClick,
             )
         }
     )
@@ -161,9 +157,9 @@ fun AvidityContent(
 fun EmulatorList(
     emulators: List<Emulator>,
     modifier: Modifier = Modifier,
-    onItemPlayClick: (emulator: Emulator) -> Unit = {},
-    onItemEditClick: (emulator: Emulator) -> Unit = {},
-    onItemDeleteClick: (emulator: Emulator) -> Unit = {},
+    onItemPlayClick: (emulator: Emulator) -> Unit,
+    onItemEditClick: (emulator: Emulator) -> Unit,
+    onItemDeleteClick: (emulator: Emulator) -> Unit,
 ) {
     Box(modifier = modifier) {
         val state = rememberLazyListState()
@@ -196,9 +192,9 @@ fun EmulatorList(
 @Composable
 fun EmulatorItem(
     emulator: Emulator,
-    onPlayClick: () -> Unit = {},
-    onEditClick: () -> Unit = {},
-    onDeleteClick: () -> Unit = {},
+    onPlayClick: () -> Unit,
+    onEditClick: () -> Unit,
+    onDeleteClick: () -> Unit,
 ) {
     Box(modifier = Modifier.fillMaxWidth()) {
         Text(
