@@ -73,7 +73,7 @@ private fun getWindowIcon(): BufferedImage =
 
 @Composable
 fun AvidityApp(darkTheme: MutableState<Boolean>) {
-    val emulatorsRepository = EmulatorsRepository(EmulatorCli.currentImplementation)
+    val emulatorsRepository = EmulatorsRepository(EmulatorCli())
         .also { it.refresh() }
 
     val emulators = emulatorsRepository.emulators.collectAsState(emptyList())
