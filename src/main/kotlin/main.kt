@@ -45,6 +45,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DesktopDialogProperties
 import androidx.compose.ui.window.Dialog
+import cli.EmulatorCli
 import data.Emulator
 import theme.AvidityDarkColorPalette
 import theme.AvidityLightColorPalette
@@ -72,7 +73,7 @@ private fun getWindowIcon(): BufferedImage =
 
 @Composable
 fun AvidityApp(darkTheme: MutableState<Boolean>) {
-    val emulatorsRepository = EmulatorsRepository()
+    val emulatorsRepository = EmulatorsRepository(EmulatorCli.currentImplementation)
         .also { it.refresh() }
 
     val emulators = emulatorsRepository.emulators.collectAsState(emptyList())

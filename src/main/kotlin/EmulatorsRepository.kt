@@ -1,21 +1,23 @@
+import cli.EmulatorCli
 import data.Emulator
-import emulatortools.findEmulators
-import emulatortools.startEmulator
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
-class EmulatorsRepository {
+class EmulatorsRepository(
+    private val emulatorCli: EmulatorCli,
+) {
 
     private val _emulators = MutableStateFlow<List<Emulator>>(emptyList())
 
     val emulators: Flow<List<Emulator>> by ::_emulators
 
     fun refresh() {
-        _emulators.value = findEmulators()
+        _emulators.value = emulatorCli.list()
+            .map { Emulator(name = it) }
     }
 
     fun start(emulator: Emulator) {
-        startEmulator(emulator.name)
+        emulatorCli.start(emulator.name)
     }
 
     fun create(emulator: Emulator) {
