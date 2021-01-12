@@ -5,8 +5,11 @@ import java.util.concurrent.TimeUnit
 
 object WindowsEmulatorCli : EmulatorCli {
 
-    private const val ANDROID_HOME = "C:\\Users\\alexm\\AppData\\Local\\Android\\Sdk\\"
-    private const val EMULATOR_EXE = "${ANDROID_HOME}emulator\\emulator.exe"
+    private val ANDROID_HOME by lazy {
+        System.getenv("ANDROID_HOME")
+    }
+
+    private val EMULATOR_EXE = "${ANDROID_HOME}\\emulator\\emulator.exe"
 
     override fun list(): List<String> {
         val command = "$EMULATOR_EXE -list-avds"
