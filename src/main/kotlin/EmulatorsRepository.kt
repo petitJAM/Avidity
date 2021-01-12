@@ -1,5 +1,6 @@
 import data.Emulator
 import emulatortools.findEmulators
+import emulatortools.startEmulator
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -14,8 +15,7 @@ class EmulatorsRepository {
     }
 
     fun start(emulator: Emulator) {
-        // TODO: Implement
-        println("Start: $emulator")
+        startEmulator(emulator.name)
     }
 
     fun create(emulator: Emulator) {
