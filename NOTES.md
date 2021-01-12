@@ -1,3 +1,7 @@
+# Emulators Notes
+
+https://developer.android.com/studio/run/emulator-commandline
+
 # Platform Notes
 
 ## Windows
