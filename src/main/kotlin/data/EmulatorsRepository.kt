@@ -1,5 +1,6 @@
+package data
+
 import cli.EmulatorCli
-import data.Emulator
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
