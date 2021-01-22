@@ -121,14 +121,15 @@ fun AvidityContent(
                 title = { Text("Emulators") },
                 actions = {
                     IconButton(onClick = onEmulatorsRefreshClick) {
-                        Icon(imageVector = Icons.TwoTone.Refresh)
+                        Icon(imageVector = Icons.TwoTone.Refresh, contentDescription = "Refresh")
                     }
 
                     IconButton(
                         onClick = { darkTheme.value = !darkTheme.value },
                     ) {
                         Icon(
-                            imageVector = vectorXmlResource(if (darkTheme.value) "light_mode_24.xml" else "dark_mode_24.xml")
+                            imageVector = vectorXmlResource(if (darkTheme.value) "light_mode_24.xml" else "dark_mode_24.xml"),
+                            contentDescription = "Toggle theme",
                         )
                     }
                 }
@@ -146,7 +147,7 @@ fun AvidityContent(
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 text = { Text("Add Emulator") },
-                icon = { Icon(imageVector = Icons.TwoTone.Add) },
+                icon = { Icon(imageVector = Icons.TwoTone.Add, contentDescription = null) },
                 onClick = onCreateEmulatorClick,
             )
         }
@@ -212,6 +213,7 @@ fun EmulatorItem(
             ) {
                 Icon(
                     imageVector = Icons.TwoTone.PlayArrow,
+                    contentDescription = "Start ${emulator.name}",
                     tint = MaterialTheme.colors.onSurface,
                 )
             }
@@ -222,6 +224,7 @@ fun EmulatorItem(
             ) {
                 Icon(
                     imageVector = Icons.TwoTone.Edit,
+                    contentDescription = "Edit ${emulator.name}",
                     tint = MaterialTheme.colors.onSurface,
                 )
             }
@@ -232,6 +235,7 @@ fun EmulatorItem(
             ) {
                 Icon(
                     imageVector = Icons.TwoTone.Delete,
+                    contentDescription = "Delete ${emulator.name}",
                     tint = MaterialTheme.colors.onSurface,
                 )
             }
