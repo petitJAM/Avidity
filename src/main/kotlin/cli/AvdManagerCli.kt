@@ -20,7 +20,7 @@ class AvdManagerCli {
      *
      * @return `true` if the AVD was successfully create, `false` otherwise
      */
-    fun create(name: String): Boolean {
+    fun create(name: String) {
         // TODO: Validate name -- push this up to the form dialog
         // TODO: Pass -k options as params
         // TODO: Pass -d options as params
@@ -55,11 +55,9 @@ class AvdManagerCli {
         val errorOutput = proc.errorStream.bufferedReader().readText().trim()
 
         println(errorOutput)
-
-        return false
     }
 
-    fun delete(name: String): Boolean {
+    fun delete(name: String) {
         val commandParts = arrayOf(
             avdManagerBinary,
             "--silent",
@@ -82,8 +80,6 @@ class AvdManagerCli {
 
         val errorOutput = proc.errorStream.bufferedReader().readText().trim()
         println(errorOutput)
-
-        return false
     }
 
     private fun ProcessBuilder.setJavaHome(value: String = "/opt/android-studio/jre/"): ProcessBuilder = this
