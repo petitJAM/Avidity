@@ -1,11 +1,13 @@
 package data
 
+import cli.AvdManagerCli
 import cli.EmulatorCli
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class EmulatorsRepository(
     private val emulatorCli: EmulatorCli,
+    private val avdManagerCli: AvdManagerCli,
 ) {
 
     private val _emulators = MutableStateFlow<List<Emulator>>(emptyList())
@@ -21,9 +23,8 @@ class EmulatorsRepository(
         emulatorCli.start(emulator.name)
     }
 
-    fun create(emulator: Emulator) {
-        // TODO: Implement
-        println("Create: $emulator")
+    fun create(name: String) {
+        avdManagerCli.create(name)
     }
 
     fun edit(emulator: Emulator) {

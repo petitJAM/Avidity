@@ -33,13 +33,20 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DesktopDialogProperties
 import androidx.compose.ui.window.Dialog
+import cli.AvdManagerCli
 import cli.EmulatorCli
 import data.Emulator
+import data.EmulatorFormData
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun AvidityApp(darkTheme: MutableState<Boolean>) {
-    val emulatorsRepository = EmulatorsRepository(EmulatorCli())
-        .also { it.refresh() }
+    val emulatorsRepository = EmulatorsRepository(
+        EmulatorCli(),
+        AvdManagerCli()
+    ).also { it.refresh() }
 
     val emulators = emulatorsRepository.emulators.collectAsState(emptyList())
 
@@ -61,8 +68,8 @@ fun AvidityApp(darkTheme: MutableState<Boolean>) {
             onDismissRequest = { dialogState.value = false }
         ) {
             NewEmulatorForm(
-                onEmulatorCreated = {
-                    emulatorsRepository.create(it)
+                onCreateClick = {
+                    emulatorsRepository.create(it.name)
                     dialogState.value = false
                 }
             )
@@ -122,7 +129,9 @@ fun AvidityContent(
 
 @Composable
 fun NewEmulatorForm(
-    onEmulatorCreated: (emulator: Emulator) -> Unit,
+    // TODO: This lambda should return a Result object
+    //  sealed class Result { object Success; data class Error }
+    onCreateClick: (formData: EmulatorFormData) -> Unit,
 ) {
     val valid = remember { mutableStateOf(false) }
 
@@ -148,8 +157,8 @@ fun NewEmulatorForm(
             modifier = Modifier.align(Alignment.CenterHorizontally).padding(horizontal = 16.dp),
             enabled = valid.value,
             onClick = {
-                val newEmulator = Emulator(name.value.text)
-                onEmulatorCreated(newEmulator)
+                val formData = EmulatorFormData(name.value.text)
+                onCreateClick(formData)
             },
         ) {
             Text("Create Emulator")
