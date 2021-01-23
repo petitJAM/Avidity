@@ -34,8 +34,7 @@ class EmulatorsRepository(
     }
 
     fun delete(emulator: Emulator) {
-        // TODO: Implement
-        println("Delete: $emulator")
+        avdManagerCli.delete(emulator.name)
         refresh()
     }
 }

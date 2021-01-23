@@ -59,6 +59,33 @@ class AvdManagerCli {
         return false
     }
 
+    fun delete(name: String): Boolean {
+        val commandParts = arrayOf(
+            avdManagerBinary,
+            "--silent",
+            "delete",
+            "avd",
+            "--name",
+            name,
+        )
+
+        val proc = ProcessBuilder(*commandParts)
+            .redirectOutput(ProcessBuilder.Redirect.PIPE)
+            .redirectError(ProcessBuilder.Redirect.PIPE)
+            .setJavaHome()
+            .start()
+
+        proc.waitFor(30, TimeUnit.SECONDS)
+
+        val output = proc.inputStream.bufferedReader().readText().trim()
+        println(output)
+
+        val errorOutput = proc.errorStream.bufferedReader().readText().trim()
+        println(errorOutput)
+
+        return false
+    }
+
     private fun ProcessBuilder.setJavaHome(value: String = "/opt/android-studio/jre/"): ProcessBuilder = this
         .also { processBuilder ->
             with(processBuilder.environment()) {
