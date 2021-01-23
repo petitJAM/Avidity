@@ -2,6 +2,8 @@
 
 https://developer.android.com/studio/run/emulator-commandline
 
+https://developer.android.com/studio/command-line/avdmanager
+
 # Platform Notes
 
 ## Windows
