@@ -69,7 +69,7 @@ fun AvidityApp(darkTheme: MutableState<Boolean>) {
         ) {
             NewEmulatorForm(
                 onCreateClick = {
-                    emulatorsRepository.create(it.name)
+                    emulatorsRepository.create(it)
                     dialogState.value = false
                 }
             )

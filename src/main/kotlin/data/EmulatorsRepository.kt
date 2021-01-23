@@ -23,8 +23,9 @@ class EmulatorsRepository(
         emulatorCli.start(emulator.name)
     }
 
-    fun create(name: String) {
-        avdManagerCli.create(name)
+    fun create(emulatorFormData: EmulatorFormData) {
+        avdManagerCli.create(emulatorFormData.name)
+        refresh()
     }
 
     fun edit(emulator: Emulator) {
