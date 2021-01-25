@@ -1,6 +1,6 @@
 package ui
 
-import data.EmulatorsRepository
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,6 +13,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.ExtendedFloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -37,9 +38,7 @@ import cli.AvdManagerCli
 import cli.EmulatorCli
 import data.Emulator
 import data.EmulatorFormData
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import data.EmulatorsRepository
 
 @Composable
 fun AvidityApp(darkTheme: MutableState<Boolean>) {
@@ -140,7 +139,10 @@ fun NewEmulatorForm(
     val revalidate = { valid.value = name.value.text.isNotBlank() }
 
     Column(
-        modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .background(MaterialTheme.colors.background),
     ) {
         Spacer(modifier = Modifier.height(16.dp))
 
