@@ -22,7 +22,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.Add
 import androidx.compose.material.icons.twotone.Refresh
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
@@ -41,7 +40,9 @@ import data.EmulatorFormData
 import data.EmulatorsRepository
 
 @Composable
-fun AvidityApp(darkTheme: MutableState<Boolean>) {
+fun AvidityApp(
+    onThemeToggle: () -> Unit,
+) {
     val emulatorsRepository = EmulatorsRepository(
         EmulatorCli(),
         AvdManagerCli()
@@ -52,8 +53,8 @@ fun AvidityApp(darkTheme: MutableState<Boolean>) {
     val dialogState = remember { mutableStateOf(false) }
 
     AvidityContent(
-        darkTheme = darkTheme,
         emulators = emulators,
+        onThemeToggle = onThemeToggle,
         onCreateEmulatorClick = { dialogState.value = true },
         onEmulatorsRefreshClick = emulatorsRepository::refresh,
         onEmulatorStart = emulatorsRepository::start,
@@ -78,8 +79,8 @@ fun AvidityApp(darkTheme: MutableState<Boolean>) {
 
 @Composable
 fun AvidityContent(
-    darkTheme: MutableState<Boolean>,
     emulators: State<List<Emulator>>,
+    onThemeToggle: () -> Unit,
     onCreateEmulatorClick: () -> Unit,
     onEmulatorsRefreshClick: () -> Unit,
     onEmulatorStart: (emulator: Emulator) -> Unit,
@@ -95,11 +96,9 @@ fun AvidityContent(
                         Icon(imageVector = Icons.TwoTone.Refresh, contentDescription = "Refresh")
                     }
 
-                    IconButton(
-                        onClick = { darkTheme.value = !darkTheme.value },
-                    ) {
+                    IconButton(onClick = onThemeToggle) {
                         Icon(
-                            imageVector = vectorXmlResource(if (darkTheme.value) "light_mode_24.xml" else "dark_mode_24.xml"),
+                            imageVector = vectorXmlResource(if (MaterialTheme.colors.isLight) "dark_mode_24.xml" else "light_mode_24.xml"),
                             contentDescription = "Toggle theme",
                         )
                     }
