@@ -1,7 +1,7 @@
+
 import androidx.compose.desktop.DesktopMaterialTheme
 import androidx.compose.desktop.Window
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.ScrollbarStyleAmbient
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -237,7 +237,6 @@ fun EmulatorList(
         }
         VerticalScrollbar(
             modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
-            style = ScrollbarStyleAmbient.current,
             adapter = rememberScrollbarAdapter(
                 scrollState = state,
                 itemCount = itemCount,
