@@ -38,7 +38,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb, TargetFormat.Exe)
             packageName = "AViDity"
-            version = "1.0.0"
+            packageVersion = "1.0.0"
             description = "Manage Android emulators"
 
             val iconsRoot = project.file("./src/main/resources")
