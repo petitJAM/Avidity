@@ -5,6 +5,7 @@ import androidx.compose.foundation.ScrollbarStyleAmbient
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -15,7 +16,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Button
@@ -46,7 +50,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.vectorXmlResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import cli.EmulatorCli
 import data.Emulator
@@ -95,17 +98,30 @@ fun AvidityApp(darkTheme: MutableState<Boolean>) {
     )
 
     if (dialogState.value) {
-        Dialog(
+        AlertDialog(
             properties = DialogProperties(title = "Create Emulator"),
-            onDismissRequest = { dialogState.value = false }
-        ) {
-            NewEmulatorForm(
-                onEmulatorCreated = {
-                    emulatorsRepository.create(it)
-                    dialogState.value = false
+            onDismissRequest = { dialogState.value = false },
+            text = {
+                NewEmulatorForm(
+                    onEmulatorCreated = {
+                        emulatorsRepository.create(it)
+                        dialogState.value = false
+                    }
+                )
+            },
+            buttons = {
+                Button(
+                    onClick = {},
+                ) {
+                    Text("Cancel")
                 }
-            )
-        }
+                Button(
+                    onClick = {},
+                ) {
+                    Text("Create Emulator")
+                }
+            }
+        )
     }
 }
 
@@ -295,31 +311,31 @@ fun NewEmulatorForm(
 
     val revalidate = { valid.value = name.value.text.isNotBlank() }
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
+    val scrollState = rememberScrollState()
+
+    Column(
+        modifier = Modifier.verticalScroll(scrollState),
     ) {
-        item {
-            Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-            TextField(
-                value = name.value,
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                label = { Text("Name") },
-                onValueChange = { name.value = it; revalidate() },
-            )
+        TextField(
+            value = name.value,
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+            label = { Text("Name") },
+            onValueChange = { name.value = it; revalidate() },
+        )
 
-            Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-            Button(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                enabled = valid.value,
-                onClick = {
-                    val newEmulator = Emulator(name.value.text)
-                    onEmulatorCreated(newEmulator)
-                },
-            ) {
-                Text("Create Emulator")
-            }
+        Button(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            enabled = valid.value,
+            onClick = {
+                val newEmulator = Emulator(name.value.text)
+                onEmulatorCreated(newEmulator)
+            },
+        ) {
+            Text("Create Emulator")
         }
     }
 }
