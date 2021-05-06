@@ -3,8 +3,8 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.4.20"
-    id("org.jetbrains.compose") version "0.2.0-build132"
+    kotlin("jvm") version "1.4.31"
+    id("org.jetbrains.compose") version "0.3.2"
 }
 
 group = "me.alexm"
@@ -38,7 +38,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb, TargetFormat.Exe)
             packageName = "AViDity"
-            version = "0.1"
+            version = "1.0.0"
             description = "Manage Android emulators"
 
             val iconsRoot = project.file("./src/main/resources")

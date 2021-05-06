@@ -1,9 +1,9 @@
 import androidx.compose.desktop.DesktopMaterialTheme
 import androidx.compose.desktop.Window
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.ScrollbarStyleAmbient
 import androidx.compose.foundation.VerticalScrollbar
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,9 +12,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumnFor
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Button
 import androidx.compose.material.Divider
 import androidx.compose.material.ExtendedFloatingActionButton
@@ -37,14 +40,14 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.savedinstancestate.savedInstanceState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.vectorXmlResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.DesktopDialogProperties
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import cli.EmulatorCli
 import data.Emulator
 import theme.AvidityDarkColorPalette
@@ -58,7 +61,8 @@ fun main() =
         title = "AViDity",
         icon = getWindowIcon(),
     ) {
-        val darkTheme = savedInstanceState { true }
+        val darkTheme = rememberSaveable { mutableStateOf(true) }
+
         DesktopMaterialTheme(colors = if (darkTheme.value) AvidityDarkColorPalette else AvidityLightColorPalette) {
             AvidityApp(darkTheme)
         }
@@ -92,7 +96,7 @@ fun AvidityApp(darkTheme: MutableState<Boolean>) {
 
     if (dialogState.value) {
         Dialog(
-            properties = DesktopDialogProperties(title = "Create Emulator"),
+            properties = DialogProperties(title = "Create Emulator"),
             onDismissRequest = { dialogState.value = false }
         ) {
             NewEmulatorForm(
@@ -115,26 +119,29 @@ fun AvidityContent(
     onEmulatorEdit: (emulator: Emulator) -> Unit,
     onEmulatorDelete: (emulator: Emulator) -> Unit,
 ) {
+    val bottomNavState = remember { MutableInteractionSource() }
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Emulators") },
                 actions = {
                     IconButton(onClick = onEmulatorsRefreshClick) {
-                        Icon(imageVector = Icons.TwoTone.Refresh)
+                        Icon(imageVector = Icons.TwoTone.Refresh, contentDescription = "")
                     }
 
                     IconButton(
                         onClick = { darkTheme.value = !darkTheme.value },
                     ) {
                         Icon(
-                            imageVector = vectorXmlResource(if (darkTheme.value) "light_mode_24.xml" else "dark_mode_24.xml")
+                            imageVector = vectorXmlResource(if (darkTheme.value) "light_mode_24.xml" else "dark_mode_24.xml"),
+                            contentDescription = "",
                         )
                     }
                 }
             )
         },
-        bodyContent = {
+        content = {
             EmulatorList(
                 emulators = emulators.value,
                 modifier = Modifier.fillMaxSize(),
@@ -146,9 +153,36 @@ fun AvidityContent(
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 text = { Text("Add Emulator") },
-                icon = { Icon(imageVector = Icons.TwoTone.Add) },
+                icon = { Icon(imageVector = Icons.TwoTone.Add, contentDescription = "") },
                 onClick = onCreateEmulatorClick,
             )
+        },
+        bottomBar = {
+            BottomNavigation {
+                BottomNavigationItem(
+                    icon = {
+                        Icon(imageVector = vectorXmlResource("smartphone_24.xml"), contentDescription = "")
+                    },
+                    selected = true,
+                    onClick = {
+                        // TODO:
+                    },
+                    label = { Text("Manage Emulators") },
+                    interactionSource = bottomNavState,
+                )
+
+                BottomNavigationItem(
+                    icon = {
+                        Icon(imageVector = vectorXmlResource("smartphone_24.xml"), contentDescription = "")
+                    },
+                    selected = false,
+                    onClick = {
+                        // TODO
+                    },
+                    label = { Text("Other thing") },
+                    interactionSource = bottomNavState,
+                )
+            }
         }
     )
 }
@@ -166,16 +200,23 @@ fun EmulatorList(
         val state = rememberLazyListState()
         val itemCount = emulators.size
 
-        LazyColumnFor(
-            items = emulators,
+        LazyColumn(
             modifier = Modifier.fillMaxSize().padding(end = 10.dp),
             state = state,
-        ) { emulator ->
-            EmulatorItem(
-                emulator = emulator,
-                onPlayClick = { onItemPlayClick(emulator) },
-                onEditClick = { onItemEditClick(emulator) },
-                onDeleteClick = { onItemDeleteClick(emulator) },
+        ) {
+            itemsIndexed(
+                items = emulators,
+                key = { index, emulator ->
+                    "${emulator.name} $index"
+                },
+                itemContent = { _, emulator ->
+                    EmulatorItem(
+                        emulator = emulator,
+                        onPlayClick = { onItemPlayClick(emulator) },
+                        onEditClick = { onItemEditClick(emulator) },
+                        onDeleteClick = { onItemDeleteClick(emulator) },
+                    )
+                }
             )
         }
         VerticalScrollbar(
@@ -213,6 +254,7 @@ fun EmulatorItem(
                 Icon(
                     imageVector = Icons.TwoTone.PlayArrow,
                     tint = MaterialTheme.colors.onSurface,
+                    contentDescription = "",
                 )
             }
 
@@ -223,6 +265,7 @@ fun EmulatorItem(
                 Icon(
                     imageVector = Icons.TwoTone.Edit,
                     tint = MaterialTheme.colors.onSurface,
+                    contentDescription = "",
                 )
             }
 
@@ -233,6 +276,7 @@ fun EmulatorItem(
                 Icon(
                     imageVector = Icons.TwoTone.Delete,
                     tint = MaterialTheme.colors.onSurface,
+                    contentDescription = "",
                 )
             }
         }
@@ -251,29 +295,31 @@ fun NewEmulatorForm(
 
     val revalidate = { valid.value = name.value.text.isNotBlank() }
 
-    ScrollableColumn(
+    LazyColumn(
         modifier = Modifier.fillMaxSize(),
     ) {
-        Spacer(modifier = Modifier.height(16.dp))
+        item {
+            Spacer(modifier = Modifier.height(16.dp))
 
-        TextField(
-            value = name.value,
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-            label = { Text("Name") },
-            onValueChange = { name.value = it; revalidate() },
-        )
+            TextField(
+                value = name.value,
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                label = { Text("Name") },
+                onValueChange = { name.value = it; revalidate() },
+            )
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        Button(
-            modifier = Modifier.align(Alignment.CenterHorizontally).padding(horizontal = 16.dp),
-            enabled = valid.value,
-            onClick = {
-                val newEmulator = Emulator(name.value.text)
-                onEmulatorCreated(newEmulator)
-            },
-        ) {
-            Text("Create Emulator")
+            Button(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                enabled = valid.value,
+                onClick = {
+                    val newEmulator = Emulator(name.value.text)
+                    onEmulatorCreated(newEmulator)
+                },
+            ) {
+                Text("Create Emulator")
+            }
         }
     }
 }
