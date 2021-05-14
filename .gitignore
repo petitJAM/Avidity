@@ -70,5 +70,8 @@ fabric.properties
 # Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser
 
+# Idk what this is
+.idea/libraries-with-intellij-classes.xml
+
 build/
 .gradle/
